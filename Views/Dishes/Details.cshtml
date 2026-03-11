@@ -1,0 +1,35 @@
+﻿@model menu.Models.Dish
+
+@{
+    ViewData["Title"] = "Dish Details";
+}
+
+<h1>@Model.Name</h1>
+
+<dl class="row">
+    <dt class="col-sm-2">Description</dt>
+    <dd class="col-sm-10">@Model.Description</dd>
+
+    <dt class="col-sm-2">Price</dt>
+    <dd class="col-sm-10">@Model.Price</dd>
+
+    <dt class="col-sm-2">Cooking Time (min)</dt>
+    <dd class="col-sm-10">@Model.CookingTimeMinutes</dd>
+
+    <dt class="col-sm-2">Category</dt>
+    <dd class="col-sm-10">@Model.Category</dd>
+
+    <dt class="col-sm-2">Calories</dt>
+    <dd class="col-sm-10">@Model.Calories</dd>
+
+    <dt class="col-sm-2">Ingredients</dt>
+    <dd class="col-sm-10">
+        @foreach (var ing in Model.Ingredients)
+        {
+            <span class="badge bg-secondary">@ing.Name</span>
+        }
+    </dd>
+</dl>
+
+<a class="btn btn-secondary" href="@Url.Action("Index")">Back to List</a>
+<a class="btn btn-primary" href="@Url.Action("Edit", new { id = Model.Id })">Edit</a>

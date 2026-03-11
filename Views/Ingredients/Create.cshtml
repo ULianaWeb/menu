@@ -1,0 +1,18 @@
+﻿@model menu.Models.Ingredient
+
+<h2>Create Ingredient</h2>
+
+<form asp-action="Create" method="post">
+
+    <label>Name</label>
+    <input asp-for="Name" />
+
+    <label>Unit</label>
+    <input asp-for="Unit" />
+
+    <label>Calories</label>
+    <input asp-for="Calories" />
+
+    <button type="submit">Create</button>
+
+</form>

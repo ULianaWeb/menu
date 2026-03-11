@@ -1,0 +1,56 @@
+﻿@model IEnumerable<menu.Models.Dish>
+
+<h2>Dishes</h2>
+
+<a asp-action="Create" class="btn btn-primary mb-3">Create Dish</a>
+
+<table class="table table-bordered">
+
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Cooking Time</th>
+            <th>Calories</th>
+            <th>Ingredients</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var dish in Model)
+        {
+            <tr>
+
+                <td>@dish.Name</td>
+
+                <td>@dish.Description</td>
+
+                <td>@dish.Category</td>
+
+                <td>@dish.Price</td>
+
+                <td>@dish.CookingTimeMinutes min</td>
+
+                <td>@dish.Calories</td>
+
+                <td>
+                    @foreach (var ing in dish.Ingredients)
+                    {
+                        <span>@ing.Name </span>
+                    }
+                </td>
+
+                <td>
+                    <a asp-action="Edit" asp-route-id="@dish.Id">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@dish.Id">Delete</a>
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+</table>

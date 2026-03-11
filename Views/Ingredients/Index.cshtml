@@ -1,0 +1,27 @@
+﻿@model IEnumerable<menu.Models.Ingredient>
+
+<h2>Ingredients</h2>
+
+<a asp-action="Create">Create Ingredient</a>
+
+<table class="table">
+    <tr>
+        <th>Name</th>
+        <th>Unit</th>
+        <th>Calories</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.Name</td>
+            <td>@item.Unit</td>
+            <td>@item.Calories</td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+    }
+</table>

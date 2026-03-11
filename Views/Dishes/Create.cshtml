@@ -1,0 +1,52 @@
+﻿@model menu.Models.Dish
+
+<h2>Create Dish</h2>
+
+<form asp-action="Create" method="post">
+
+    <div>
+        <label>Name</label>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div>
+        <label>Description</label>
+        <input asp-for="Description" class="form-control" />
+    </div>
+
+    <div>
+        <label>Price</label>
+        <input asp-for="Price" type="number" step="0.01" min="0" class="form-control" />
+        <span asp-validation-for="Price" class="text-danger"></span>
+    </div>
+
+    <div>
+        <label>Category</label>
+        <input asp-for="Category" class="form-control" />
+    </div>
+
+    <div>
+        <label>Cooking Time (minutes)</label>
+        <input asp-for="CookingTimeMinutes" class="form-control" />
+    </div>
+
+    <div>
+        <label>Calories</label>
+        <input asp-for="Calories" class="form-control" />
+    </div>
+
+    <h4>Ingredients</h4>
+
+    @foreach (var ing in (List<menu.Models.Ingredient>)ViewBag.Ingredients)
+    {
+        <div>
+            <input type="checkbox" name="selectedIngredients" value="@ing.Id" />
+            <label>@ing.Name</label>
+        </div>
+    }
+
+    <br />
+
+    <button type="submit">Save</button>
+
+</form>
