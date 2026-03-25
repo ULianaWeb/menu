@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using menu.Data;
 using menu.Models;
+using System.Text.Json;
 
 namespace menu.Controllers
 {
@@ -14,24 +15,40 @@ namespace menu.Controllers
             _context = context;
         }
 
+        // ================= INDEX =================
         public async Task<IActionResult> Index()
         {
-            var dishes = await _context.Dishes
-                .Include(d => d.Ingredients)
-                .ToListAsync();
-
-            return View(dishes);
+            return View(await _context.Dishes.Include(d => d.Ingredients).ToListAsync());
         }
 
+        // ================= CREATE =================
         public async Task<IActionResult> Create()
         {
             ViewBag.Ingredients = await _context.Ingredients.ToListAsync();
+
+            // читаємо з сесії
+            var json = HttpContext.Session.GetString("DishCreate");
+            if (json != null)
+            {
+                var dish = JsonSerializer.Deserialize<Dish>(json);
+                return View(dish);
+            }
+
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(Dish dish, int[] selectedIngredients)
         {
+            // зберігаємо у сесію
+            HttpContext.Session.SetString("DishCreate", JsonSerializer.Serialize(dish));
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Ingredients = await _context.Ingredients.ToListAsync();
+                return View(dish);
+            }
+
             if (selectedIngredients != null)
             {
                 dish.Ingredients = await _context.Ingredients
@@ -39,12 +56,16 @@ namespace menu.Controllers
                     .ToListAsync();
             }
 
-            _context.Dishes.Add(dish);
+            _context.Add(dish);
             await _context.SaveChangesAsync();
+
+            // очистка
+            HttpContext.Session.Remove("DishCreate");
 
             return RedirectToAction(nameof(Index));
         }
 
+        // ================= EDIT =================
         public async Task<IActionResult> Edit(int id)
         {
             var dish = await _context.Dishes
@@ -53,12 +74,29 @@ namespace menu.Controllers
 
             ViewBag.Ingredients = await _context.Ingredients.ToListAsync();
 
+            // перевірка сесії
+            var json = HttpContext.Session.GetString("DishEdit");
+            if (json != null)
+            {
+                var sessionDish = JsonSerializer.Deserialize<Dish>(json);
+                if (sessionDish.Id == id)
+                    return View(sessionDish);
+            }
+
             return View(dish);
         }
 
         [HttpPost]
         public async Task<IActionResult> Edit(int id, Dish dish, int[] selectedIngredients)
         {
+            HttpContext.Session.SetString("DishEdit", JsonSerializer.Serialize(dish));
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Ingredients = await _context.Ingredients.ToListAsync();
+                return View(dish);
+            }
+
             var dishToUpdate = await _context.Dishes
                 .Include(d => d.Ingredients)
                 .FirstAsync(d => d.Id == id);
@@ -79,16 +117,17 @@ namespace menu.Controllers
                     .ToListAsync();
 
                 foreach (var ing in ingredients)
-                {
                     dishToUpdate.Ingredients.Add(ing);
-                }
             }
 
             await _context.SaveChangesAsync();
 
+            HttpContext.Session.Remove("DishEdit");
+
             return RedirectToAction(nameof(Index));
         }
 
+        // ================= DELETE =================
         public async Task<IActionResult> Delete(int id)
         {
             var dish = await _context.Dishes.FindAsync(id);
@@ -107,6 +146,20 @@ namespace menu.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        public IActionResult CreateDraft([FromBody] Dish dish)
+        {
+            HttpContext.Session.SetString("DishCreate", JsonSerializer.Serialize(dish));
+            return Ok();
+        }
+
+        [HttpPost]
+        public IActionResult EditDraft([FromBody] Dish dish)
+        {
+            HttpContext.Session.SetString("DishEdit", JsonSerializer.Serialize(dish));
+            return Ok();
         }
     }
 }

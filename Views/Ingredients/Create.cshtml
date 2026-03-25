@@ -6,13 +6,20 @@
 
     <label>Name</label>
     <input asp-for="Name" />
+    <span asp-validation-for="Name" class="text-danger"></span>
 
     <label>Unit</label>
     <input asp-for="Unit" />
+    <span asp-validation-for="Unit" class="text-danger"></span>
 
     <label>Calories</label>
     <input asp-for="Calories" />
+    <span asp-validation-for="Calories" class="text-danger"></span>
 
     <button type="submit">Create</button>
 
 </form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

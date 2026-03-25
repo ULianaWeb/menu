@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using menu.Data;
 using menu.Models;
+using System.Text.Json;
 
 namespace menu.Controllers
 {
@@ -19,41 +20,65 @@ namespace menu.Controllers
             return View(await _context.Ingredients.ToListAsync());
         }
 
+        // CREATE
         public IActionResult Create()
         {
+            var json = HttpContext.Session.GetString("IngredientCreate");
+            if (json != null)
+            {
+                var ingredient = JsonSerializer.Deserialize<Ingredient>(json);
+                return View(ingredient);
+            }
+
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(Ingredient ingredient)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Ingredients.Add(ingredient);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            HttpContext.Session.SetString("IngredientCreate", JsonSerializer.Serialize(ingredient));
 
-            return View(ingredient);
+            if (!ModelState.IsValid)
+                return View(ingredient);
+
+            _context.Add(ingredient);
+            await _context.SaveChangesAsync();
+
+            HttpContext.Session.Remove("IngredientCreate");
+
+            return RedirectToAction(nameof(Index));
         }
 
+        // EDIT
         public async Task<IActionResult> Edit(int id)
         {
             var ingredient = await _context.Ingredients.FindAsync(id);
+
+            var json = HttpContext.Session.GetString("IngredientEdit");
+            if (json != null)
+            {
+                var sessionIngredient = JsonSerializer.Deserialize<Ingredient>(json);
+                if (sessionIngredient.Id == id)
+                    return View(sessionIngredient);
+            }
+
             return View(ingredient);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Ingredient ingredient)
+        public async Task<IActionResult> Edit(int id, Ingredient ingredient)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Update(ingredient);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
+            HttpContext.Session.SetString("IngredientEdit", JsonSerializer.Serialize(ingredient));
 
-            return View(ingredient);
+            if (!ModelState.IsValid)
+                return View(ingredient);
+
+            _context.Update(ingredient);
+            await _context.SaveChangesAsync();
+
+            HttpContext.Session.Remove("IngredientEdit");
+
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Delete(int id)

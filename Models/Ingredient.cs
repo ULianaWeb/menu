@@ -7,11 +7,13 @@ namespace menu.Models
     {
         public int Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }
 
         public string Unit { get; set; }
 
+        [Required]
+        [Range(5, 5000, ErrorMessage = "Calories must be >= 5")]
         public int Calories { get; set; }
 
         // Many-to-many
