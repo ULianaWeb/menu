@@ -17,7 +17,7 @@ namespace menu.Models
         public decimal Price { get; set; }
 
         [Required]
-        [Range(1, 500, ErrorMessage = "Cooking time must be > 0")]
+        [Range(1, 120, ErrorMessage = "Cooking time must be > 0")]
         public int CookingTimeMinutes { get; set; }
 
         [Required(ErrorMessage = "Category is required")]

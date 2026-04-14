@@ -1,0 +1,24 @@
+﻿@model List<menu.Areas.Identity.Data.menuUser>
+
+@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<h2>Users</h2>
+
+<table class="table">
+    <tr>
+        <th>Email</th>
+        <th>Actions</th>
+    </tr>
+
+    @foreach (var user in Model)
+    {
+        <tr>
+            <td>@user.Email</td>
+            <td>
+                <a asp-action="EditRole" asp-route-id="@user.Id">Edit Role</a>
+            </td>
+        </tr>
+    }
+</table>

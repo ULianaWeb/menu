@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using menu.Data;
 using menu.Models;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace menu.Controllers
 {
@@ -22,6 +23,7 @@ namespace menu.Controllers
         }
 
         // ================= CREATE =================
+        [Authorize]
         public async Task<IActionResult> Create()
         {
             ViewBag.Ingredients = await _context.Ingredients.ToListAsync();
@@ -38,6 +40,7 @@ namespace menu.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create(Dish dish, int[] selectedIngredients)
         {
             // зберігаємо у сесію
@@ -66,6 +69,7 @@ namespace menu.Controllers
         }
 
         // ================= EDIT =================
+        [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
             var dish = await _context.Dishes
@@ -87,6 +91,7 @@ namespace menu.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, Dish dish, int[] selectedIngredients)
         {
             HttpContext.Session.SetString("DishEdit", JsonSerializer.Serialize(dish));
@@ -128,6 +133,7 @@ namespace menu.Controllers
         }
 
         // ================= DELETE =================
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             var dish = await _context.Dishes.FindAsync(id);
@@ -135,6 +141,7 @@ namespace menu.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var dish = await _context.Dishes.FindAsync(id);

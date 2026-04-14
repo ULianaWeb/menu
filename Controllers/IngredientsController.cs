@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using menu.Data;
 using menu.Models;
 using System.Text.Json;
+using Microsoft.AspNetCore.Authorization;
 
 namespace menu.Controllers
 {
@@ -21,6 +22,7 @@ namespace menu.Controllers
         }
 
         // CREATE
+        [Authorize]
         public IActionResult Create()
         {
             var json = HttpContext.Session.GetString("IngredientCreate");
@@ -34,6 +36,7 @@ namespace menu.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Create(Ingredient ingredient)
         {
             HttpContext.Session.SetString("IngredientCreate", JsonSerializer.Serialize(ingredient));
@@ -50,6 +53,7 @@ namespace menu.Controllers
         }
 
         // EDIT
+        [Authorize]
         public async Task<IActionResult> Edit(int id)
         {
             var ingredient = await _context.Ingredients.FindAsync(id);
@@ -66,6 +70,7 @@ namespace menu.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, Ingredient ingredient)
         {
             HttpContext.Session.SetString("IngredientEdit", JsonSerializer.Serialize(ingredient));
@@ -81,6 +86,7 @@ namespace menu.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             var ingredient = await _context.Ingredients.FindAsync(id);
@@ -88,6 +94,7 @@ namespace menu.Controllers
         }
 
         [HttpPost, ActionName("Delete")]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var ingredient = await _context.Ingredients.FindAsync(id);
