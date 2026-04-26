@@ -2,6 +2,7 @@ using menu.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using menu.Areas.Identity.Data;
+using menu.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +20,7 @@ builder.Services.AddDefaultIdentity<menuUser>(options =>
 
 // MVC
 builder.Services.AddControllersWithViews();
+builder.Services.AddSignalR();
 
 // Session
 builder.Services.AddDistributedMemoryCache();
@@ -62,5 +64,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+app.MapHub<ChatHub>("/chathub");
 
 app.Run();
